@@ -4,12 +4,25 @@ Random scripts for Road to Vostok.
 
 ## How to Install
 
-1. Copy the scripts you want to install to the game's root directory.
-2. Create an `override.cfg` file in the game's root directory and include each script as an autoload singleton (prepend an asterisk to the script's file path to make it a singleton).
+1. Create a `rikkamus` directory in the game's root directory.
+2. Copy the `Common` directory to the `rikkamus` directory.
+3. Copy the directories of the scripts you want to install to the `rikkamus` directory.
+4. Create an `override.cfg` file in the game's root directory and add `res://rikkamus/Common/Common.gd` as an autoload singleton (prepend an asterisk to the script's path to make it a singleton).
+
+## Example directory structure
+```
+Road to Vostok/
+    rikkamus/
+        Common/
+        PauseOnFocusLost/
+    override.cfg
+    RTV.exe
+    RTV.pck
+```
 
 ## Example `override.cfg` file
 
 ```
 [autoload]
-PauseOnFocusLost="*res://PauseOnFocusLost.gd"
+RikkamusCommon="*res://rikkamus/Common/Common.gd"
 ```

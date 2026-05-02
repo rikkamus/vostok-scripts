@@ -1,19 +1,25 @@
 # Part of https://github.com/rikkamus/vostok-scripts
 extends Node
 
-const VERSION := "1.0.1-SNAPSHOT"
-const SUPPORTED_GAME_VERSION := "0.1.1.3"
+const VERSION := "1.1.0"
+
+var common = null
 
 
 func _ready() -> void:
-    var game_version = ProjectSettings.get_setting("application/config/version")
-
-    if game_version == SUPPORTED_GAME_VERSION:
-        print("Loaded PauseOnFocusLost script v%s by rikkamus" % VERSION)
-    else:
-        print("ERROR: PauseOnFocusLost script v%s by rikkamus requires Road to Vostok v%s." % [VERSION, SUPPORTED_GAME_VERSION])
+    if common == null:
+        print("ERROR: Attempted to load PauseOnFocusLost script directly. Add the \"Common\" script as an autoload singleton instead. Visit \"https://github.com/rikkamus/vostok-scripts\" for more information.")
         set_process(false)
         queue_free()
+
+
+func get_script_menu_messages() -> Array:
+    return [
+        {
+            "message": "PauseOnFocusLost",
+            "type": "info"
+        }
+    ]
 
 
 func _process(_delta: float) -> void:
