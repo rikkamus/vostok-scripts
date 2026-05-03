@@ -1,7 +1,7 @@
 # Part of https://github.com/rikkamus/vostok-scripts
 extends Node
 
-const VERSION := "1.1.0"
+const VERSION := "1.2.0-SNAPSHOT"
 
 var common = null
 

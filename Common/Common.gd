@@ -1,7 +1,7 @@
 # Part of https://github.com/rikkamus/vostok-scripts
 extends Node
 
-const VERSION := "1.1.0"
+const VERSION := "1.2.0-SNAPSHOT"
 const SUPPORTED_GAME_VERSION := "0.1.1.3"
 
 const LOG_TAG := "Common"
@@ -52,50 +52,41 @@ func _load_scripts() -> ScriptLoadErrorLevel:
     var script_root_dir_path := game_dir_path.path_join(LOCAL_SCRIPT_ROOT_DIR_PATH)
     var script_root_dir := DirAccess.open(script_root_dir_path)
 
-    for script_dir_name in script_root_dir.get_directories():
-        var script_dir_path = script_root_dir_path.path_join(script_dir_name)
+    if script_root_dir == null:
+        return error
 
-        if script_root_dir.current_is_dir():
-            if script_dir_name != COMMON_SCRIPT_DIR_NAME:
-                error = max(error, _load_main_script(script_dir_path))
-        else:
-            error = max(error, ScriptLoadErrorLevel.WARNING)
-            log_script_warning_message(LOG_TAG, "Skipping file \"%s\". Reason: Not a directory." % script_dir_path)
+    for script_dir_name in script_root_dir.get_directories():
+        if script_dir_name != COMMON_SCRIPT_DIR_NAME:
+            error = max(error, _load_main_script(script_dir_name.trim_suffix("/")))
 
     return error
 
 
-func _load_main_script(script_dir_absolute_path: String) -> ScriptLoadErrorLevel:
-    var main_script_file_path: String = script_dir_absolute_path.path_join("Main.gd")
+func _load_main_script(script_name: String) -> ScriptLoadErrorLevel:
+    var script_file_local_path: String = script_name.path_join("Main.gd")
 
-    if not FileAccess.file_exists(main_script_file_path):
-        log_script_error_message(LOG_TAG, "Could not find main script file in script directory \"%s\"." % script_dir_absolute_path)
-        return ScriptLoadErrorLevel.ERROR
-
-    var main_script = ResourceLoader.load(main_script_file_path, "Script")
-
-    if main_script is not Script:
-        log_script_error_message(LOG_TAG, "File \"%s\" is not a script." % main_script_file_path)
+    var main_script: Script = load_script(script_file_local_path)
+    if main_script == null:
         return ScriptLoadErrorLevel.ERROR
 
     if not main_script.get_script_constant_map().has("VERSION"):
-        log_script_error_message(LOG_TAG, "Script \"%s\" does not define a VERSION constant." % main_script_file_path)
+        log_script_error_message(LOG_TAG, "Script \"%s\" does not define a VERSION constant." % script_name)
         return ScriptLoadErrorLevel.ERROR
 
     var script_version = main_script.get_script_constant_map()["VERSION"]
 
     if script_version != VERSION:
-        log_script_error_message(LOG_TAG, "Script \"%s\" has version \"%s\", but version \"%s\" was expected." % [main_script_file_path, script_version, VERSION])
+        log_script_error_message(LOG_TAG, "Script \"%s\" has version \"%s\", but version \"%s\" was expected." % [script_name, script_version, VERSION])
         return ScriptLoadErrorLevel.ERROR
 
     if main_script.get_instance_base_type() != "Node":
-        log_script_error_message(LOG_TAG, "Script \"%s\" does not directly extend Node." % main_script_file_path)
+        log_script_error_message(LOG_TAG, "Script \"%s\" does not directly extend Node." % script_name)
         return ScriptLoadErrorLevel.ERROR
 
-    log_script_info_message(LOG_TAG, "Loading script \"%s\"..." % main_script_file_path)
+    log_script_info_message(LOG_TAG, "Initializing script \"%s\"..." % script_name)
 
     var node: Node = Node.new()
-    node.name = script_dir_absolute_path.get_file()
+    node.name = script_name
     node.set_script(main_script)
 
     var error: ScriptLoadErrorLevel = ScriptLoadErrorLevel.OK
@@ -104,10 +95,28 @@ func _load_main_script(script_dir_absolute_path: String) -> ScriptLoadErrorLevel
         node.common = self
     else:
         error = max(error, ScriptLoadErrorLevel.WARNING)
-        log_script_warning_message(LOG_TAG, "Common property not found in script \"%s\"." % main_script_file_path)
+        log_script_warning_message(LOG_TAG, "Common property not found in script \"%s\"." % script_name)
 
     add_child(node)
     return error
+
+
+func load_script(local_path: String) -> Script:
+    var game_dir_path := OS.get_executable_path().get_base_dir()
+    var script_root_dir_path := game_dir_path.path_join(LOCAL_SCRIPT_ROOT_DIR_PATH)
+    var script_absolute_path = script_root_dir_path.path_join(local_path)
+
+    if not FileAccess.file_exists(script_absolute_path):
+        log_script_error_message(LOG_TAG, "Requested script file \"%s\" does not exist." % script_absolute_path)
+        return null
+
+    var script = ResourceLoader.load(script_absolute_path, "Script")
+
+    if script is not Script:
+        log_script_error_message(LOG_TAG, "File \"%s\" is not a script." % script_absolute_path)
+        return null
+
+    return script
 
 
 func _try_update_menu_message_list() -> void:
