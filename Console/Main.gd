@@ -115,7 +115,7 @@ func _on_console_command_submitted(command_text: String) -> void:
     if _commands.has(normalized_name):
         _commands[normalized_name].execute(normalized_name, args.slice(1))
     else:
-        overlay.append_output_line("Unknown command: " + args[0])
+        overlay.append_output_line("ERROR: Unknown command: " + args[0].strip_edges())
 
 
 func _normalize_command_name(command_name: String) -> String:
