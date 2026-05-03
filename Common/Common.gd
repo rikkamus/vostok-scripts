@@ -103,22 +103,63 @@ func _load_main_script(script_name: String) -> ScriptLoadErrorLevel:
     return error
 
 
-func load_script(local_path: String) -> Script:
+func load_scripts_in_dir(local_dir_path: String) -> Array[Script]:
     var game_dir_path := OS.get_executable_path().get_base_dir()
     var script_root_dir_path := game_dir_path.path_join(LOCAL_SCRIPT_ROOT_DIR_PATH)
-    var script_absolute_path = script_root_dir_path.path_join(local_path)
+    var script_dir_path := script_root_dir_path.path_join(local_dir_path)
 
-    if not FileAccess.file_exists(script_absolute_path):
-        log_script_error_message(LOG_TAG, "Requested script file \"%s\" does not exist." % script_absolute_path)
+    var script_dir := DirAccess.open(script_dir_path)
+    if script_dir == null:
+        log_script_warning_message(LOG_TAG, "Could not open directory \"%s\"." % script_dir_path)
+        return []
+
+    var scripts: Array[Script]
+
+    for script_file_name in script_dir.get_files():
+        if script_file_name.get_extension() != "gd":
+            continue
+
+        var script: Script = load_script(local_dir_path.path_join(script_file_name))
+        if script != null:
+            scripts.append(script)
+
+    return scripts
+
+
+func load_resource(local_path: String, type_hint: String = "") -> Resource:
+    var game_dir_path := OS.get_executable_path().get_base_dir()
+    var script_root_dir_path := game_dir_path.path_join(LOCAL_SCRIPT_ROOT_DIR_PATH)
+    var resource_absolute_path = script_root_dir_path.path_join(local_path)
+
+    if not FileAccess.file_exists(resource_absolute_path):
+        log_script_error_message(LOG_TAG, "Could not open resource file \"%s\"." % resource_absolute_path)
         return null
 
-    var script = ResourceLoader.load(script_absolute_path, "Script")
+    return ResourceLoader.load(resource_absolute_path, type_hint)
+
+
+func load_script(local_path: String) -> Script:
+    var script: Resource = load_resource(local_path, "Script")
+    if script == null:
+        return null
 
     if script is not Script:
-        log_script_error_message(LOG_TAG, "File \"%s\" is not a script." % script_absolute_path)
+        log_script_error_message(LOG_TAG, "Resource \"%s\" is not a script." % local_path)
         return null
 
     return script
+
+
+func load_scene(local_path: String) -> PackedScene:
+    var scene: PackedScene = load_resource(local_path, "PackedScene")
+    if scene == null:
+        return null
+
+    if scene is not PackedScene:
+        log_script_error_message(LOG_TAG, "Resource \"%s\" is not a scene." % local_path)
+        return null
+
+    return scene
 
 
 func _try_update_menu_message_list() -> void:
