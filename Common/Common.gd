@@ -53,6 +53,8 @@ func _load_scripts() -> ScriptLoadErrorLevel:
     var script_root_dir := DirAccess.open(script_root_dir_path)
 
     if script_root_dir == null:
+        log_script_warning_message(LOG_TAG, "Could not open directory \"%s\"." % script_root_dir_path)
+        error = max(error, ScriptLoadErrorLevel.WARNING)
         return error
 
     for script_dir_name in script_root_dir.get_directories():
