@@ -62,7 +62,6 @@ func _handle_heal(delta: float) -> void:
 
 func _has_affliction() -> bool:
     return (
-        game_data.overweight or
         game_data.starvation or
         game_data.dehydration or
         game_data.bleeding or
