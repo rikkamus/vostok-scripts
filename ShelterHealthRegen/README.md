@@ -12,6 +12,6 @@ The following afflictions will be healed:
 - Rupture
 - Headshot
 
-Any other afflictions will not be removed. Health will not regenerate until all afflictions* are removed.
+Any other afflictions will not be removed. Health will not regenerate until all afflictions* have been removed. Regeneration will be paused while sleeping.
 
 \* except for overweight
