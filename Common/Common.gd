@@ -237,3 +237,7 @@ func log_script_warning_message(script: String, message: String) -> void:
 
 func log_script_error_message(script: String, message: String) -> void:
     print("[ERROR][rikkamus.%s] %s" % [script, message])
+
+
+func is_in_level() -> bool:
+    return get_tree().current_scene != null and get_tree().current_scene.get_node_or_null("/root/Map") != null

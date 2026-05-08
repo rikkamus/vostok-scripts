@@ -30,7 +30,7 @@ func get_script_menu_messages() -> Array:
 
 
 func _process(delta: float) -> void:
-    if not game_data.shelter or game_data.isDead:
+    if not common.is_in_level() or not game_data.shelter or game_data.isDead:
         _affliction_clear_timer = 0.0
         return
 
