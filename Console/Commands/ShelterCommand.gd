@@ -43,3 +43,7 @@ func execute(command: String, args: PackedStringArray) -> void:
     Loader.LoadScene(shelter)
     Loader.SaveCharacter()
     Loader.SaveWorld()
+
+
+func get_description() -> String:
+    return "Teleports the player to the last visited shelter."

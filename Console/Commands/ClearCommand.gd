@@ -14,3 +14,7 @@ func execute(command: String, args: PackedStringArray) -> void:
         _console_main.overlay.clear_output()
     else:
         _console_main.overlay.append_output_line("Usage: " + command)
+
+
+func get_description() -> String:
+    return "Clears console output."

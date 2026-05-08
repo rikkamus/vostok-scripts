@@ -96,6 +96,15 @@ func register_command(command_name: String, command_script: Script) -> bool:
     return true
 
 
+func get_command(command_name: String) -> RefCounted:
+    var normalized_name = _normalize_command_name(command_name)
+    return _commands.get(normalized_name)
+
+
+func get_registered_commands() -> Array:
+    return _commands.keys()
+
+
 func _on_console_command_submitted(command_text: String) -> void:
     var optional_args: Variant = _parse_args(command_text)
 

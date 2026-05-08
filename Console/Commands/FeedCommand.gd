@@ -31,3 +31,7 @@ func execute(command: String, args: PackedStringArray) -> void:
 
     game_data.starvation = false
     game_data.dehydration = false
+
+
+func get_description() -> String:
+    return "Restores energy and hydration to maximum values."

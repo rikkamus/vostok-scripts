@@ -39,3 +39,7 @@ func execute(command: String, args: PackedStringArray) -> void:
     game_data.poisoning = false
     game_data.rupture = false
     game_data.headshot = false
+
+
+func get_description() -> String:
+    return "Restores health, mental, temperature and oxygen to maximum values and removes afflictions."
