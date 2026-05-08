@@ -33,6 +33,9 @@ func try_pause() -> void:
     if get_tree().paused:
         return
 
+    if get_tree().current_scene == null:
+        return
+
     var ui_manager = get_tree().current_scene.get_node_or_null("/root/Map/Core/UI")
     if not is_instance_valid(ui_manager) or not ui_manager.is_node_ready():
         return
