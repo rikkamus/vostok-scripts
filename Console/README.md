@@ -12,3 +12,4 @@ Adds a console that can be toggled using the tilde (`~`) key.
 | heal      | Restores health, mental, temperature and oxygen to maximum values and removes afflictions.   |
 | feed      | Restores energy and hydration to maximum values.                                             |
 | give      | Gives an item to the player.                                                                 |
+| search    | Looks up item IDs based on a partial item name.                                              |
