@@ -136,6 +136,7 @@ func _parse_args(command_text: String) -> Variant:
 
     var current_arg: String = ""
 
+    var in_arg: bool = false
     var in_quotes: bool = false
     var escape: bool = false
 
@@ -146,10 +147,12 @@ func _parse_args(command_text: String) -> Variant:
             continue
 
         if c == "\\":
+            in_arg = true
             escape = true
             continue
 
         if c == "\"":
+            in_arg = true
             in_quotes = not in_quotes
             continue
 
@@ -158,18 +161,20 @@ func _parse_args(command_text: String) -> Variant:
             continue
 
         if c.strip_edges().is_empty():
-            if not current_arg.is_empty():
+            if in_arg:
                 args.append(current_arg)
                 current_arg = ""
+                in_arg = false
 
             continue
 
+        in_arg = true
         current_arg += c
 
     if in_quotes or escape:
         return null
 
-    if not current_arg.is_empty():
+    if in_arg:
         args.append(current_arg)
 
     return args
